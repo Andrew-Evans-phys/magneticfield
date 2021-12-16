@@ -1,1 +1,3 @@
-Maybe add the use of Rank 3 tensors in the calculation of magnetic fields
+Maybe add the use of Rank 2 3 dimensional tensors in the calculation of magnetic fields
+Add vector in the image processing for the c++ system
+Add shell script wrapper for c++ code
