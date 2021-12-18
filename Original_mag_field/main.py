@@ -50,7 +50,7 @@ class Particle:
 
 
 
-bound_range = 6
+bound_range = 4
 
 output_vectors = []
 for i in range(1,bound_range):
