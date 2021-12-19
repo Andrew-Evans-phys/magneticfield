@@ -48,11 +48,13 @@ strength = []
 for i in range(len(mag_x)):
      strength.append(np.sqrt(mag_x[i]**2+mag_y[i]**2+mag_z[i]**2))
 
+
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
 
 s = 1
-ax.scatter(pos_x, pos_y, pos_z, s=s * 5, c=strength, cmap='rainbow')
+ax.quiver(pos_x, pos_y, pos_z, mag_x, mag_y, mag_z, length=.2, lw=2, normalize=False)#, colors = strength
+#ax.scatter(pos_x, pos_y, pos_z, s=s * 5, c=strength, cmap='rainbow')
 
 plt.show()
