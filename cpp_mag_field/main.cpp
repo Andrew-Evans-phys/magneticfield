@@ -7,8 +7,8 @@
 using namespace std;
 
 Vector wire(float t){
-    float x_coord = .5*cos(t);
-    float y_coord = .5*sin(t);
+    float x_coord = .25*cos(t);
+    float y_coord = .25*sin(t);
     float z_coord = 0;
     Vector new_vector;
     new_vector.setVec(x_coord, y_coord, z_coord);
@@ -21,6 +21,12 @@ void data_out(string data){
 
     file_out.open(filename, std::ios_base::app);
     file_out << data << endl;
+}
+
+void data_delete(){
+  ofstream MyFile("data.txt");
+  MyFile << "";
+  MyFile.close();
 }
 
 Vector mag_field_calc(Vector magnetic_field_point, float upper_bound, float lower_bound, float grain, float current, float dl){
@@ -60,6 +66,9 @@ int main(){
     Vector magnetic_field_point;
     Vector magnetic_field;
     Vector variation;
+
+    //Clearing old data 
+    data_delete();
 
     //search  algorithm 
     for(int l = 0; l < search_grain+1; l++){
