@@ -158,9 +158,9 @@ int main(){
     float pi = 3.1415;
     ofstream MyFile("data.txt"); 
     float grain = 10000;
-    float search_grain = 10;
-    float search_upper_bound = 2;
-    float search_lower_bound = -2;
+    float search_grain = 5;
+    float search_upper_bound = 2*pi;
+    float search_lower_bound = 0;
     float upper_bound = 2*pi;
     float lower_bound = 0;
     float dl = ((upper_bound-lower_bound)/grain);
@@ -182,8 +182,10 @@ for(int l = 0; l < search_grain+1; l++){
         for(int j = 0; j < search_grain+1; j++){
             float dy = (search_upper_bound-search_lower_bound)/search_grain;
             magnetic_field.setVec(0,0,0);
-            magnetic_field_point.setVec(search_lower_bound + dx*l, search_lower_bound + dy*j, search_lower_bound+dz*k);
-            
+            magnetic_field_point = wire(dx*l);
+            Vector variation;
+            variation.setVec(dx*l, dy*j, dz*k);
+            magnetic_field_point = magnetic_field_point + variation; 
             for(int i = 0; i < grain+1; i++){
                 float step = lower_bound + dl*(i);
                 float next_step = lower_bound + dl*(i+1);
