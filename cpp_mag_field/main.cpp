@@ -6,25 +6,29 @@
 #include "Vector.h"
 using namespace std;
 
+//defined  globals
+float mu0 = .00000126;
+float pi = 3.1415;
+
 Vector wire(float t){
-    float x_coord = .25*cos(t);
-    float y_coord = .25*sin(t);
-    float z_coord = 0;
+    float x_coord = sin(5*t);
+    float y_coord = cos(5*t);
+    float z_coord = t;
     Vector new_vector;
     new_vector.setVec(x_coord, y_coord, z_coord);
     return new_vector;
 }
 
-void data_out(string data){
-    string filename("data.txt");
+void data_out(string data, string file){
+    string filename(file);
     ofstream file_out;
 
     file_out.open(filename, std::ios_base::app);
     file_out << data << endl;
 }
 
-void data_delete(){
-  ofstream MyFile("data.txt");
+void data_delete(string file){
+  ofstream MyFile(file);
   MyFile << "";
   MyFile.close();
 }
@@ -47,51 +51,67 @@ Vector mag_field_calc(Vector magnetic_field_point, float upper_bound, float lowe
     return magnetic_field;
 }
 
-int main(){   
-    //defining constants  
-    float mu0 = .00000126;
-    float pi = 3.1415;
-
-    //setting run parameters
-    float grain = 1000;
-    float search_grain = 5;
-    float search_upper_bound = 1;
-    float search_lower_bound = -1;
-    float upper_bound = 2*pi;
-    float lower_bound = 0;
-    float dl = ((upper_bound-lower_bound)/grain);
-    float current = 1.0;
-
-    //defining vectors
+void search_field(float wire_grain, float search_grain, float upper_bound, float lower_bound, float int_grain, float current){
     Vector magnetic_field_point;
     Vector magnetic_field;
-    Vector variation;
 
-    //Clearing old data 
-    data_delete();
+    //defining small change in wire, the search radius, and a small change in angle
+    float dwire = (upper_bound-lower_bound)/int_grain;
+    float base_search_radius = .9; //need to account for
+    float dtheta = (2*pi)/search_grain;
 
-    //search  algorithm 
-    for(int l = 0; l < search_grain+1; l++){
-        float dx = (search_upper_bound-search_lower_bound)/search_grain;
-        for(int k = 0; k < (search_grain+1); k++){ 
-            float dz = (search_upper_bound-search_lower_bound)/search_grain;
-            for(int j = 0; j < search_grain+1; j++){
-                float dy = (search_upper_bound-search_lower_bound)/search_grain;
-                magnetic_field_point = wire(dx*l);
-                variation.setVec(search_lower_bound + dx*l, search_lower_bound + dy*j, search_lower_bound + dz*k);
-                magnetic_field_point = magnetic_field_point + variation; 
-                magnetic_field = mag_field_calc(magnetic_field_point, upper_bound, lower_bound, grain, current, dl);
-                /*
-                //For unit accurate measurements 
-                double temp = mu0/(pi*4.0);
-                float coeff = (float) temp;
-                magnetic_field = magnetic_field*coeff;
-                */
-                //writing to file 
-                string output_data = magnetic_field_point.data_out()+" "+magnetic_field.data_out();
-                data_out(output_data);
-            }
+    for(int i = 0; i < wire_grain; i++){
+        float step = (upper_bound-lower_bound)/wire_grain;
+        
+        //defining tangent path vectors and normalizing 
+        Vector dl = wire(step*(i+0.001)+lower_bound)- wire(step*(i)+lower_bound);
+        Vector dlprime = wire(step*(i+0.0002)+lower_bound)- wire(step*(i+0.0001)+lower_bound);
+        dl.normalize();
+        dlprime.normalize();
+        
+
+
+        //Calculating acceleration vector and normalizing  
+        Vector dn = dlprime-dl;
+        dn.normalize();
+
+        //checking for the straght line case
+        if(dn.get_vec_comp(0) == 0 && dn.get_vec_comp(1) == 0 && dn.get_vec_comp(2) == 0){
+            Vector dl = wire(step*(i+0.001)*step*(i+0.001)+lower_bound) - wire(step*i*step*i+lower_bound);
+            dl.normalize();
+        }
+        
+        //finding B
+        Vector B = dl.cross_product(dn);
+        B.normalize();
+        
+
+        for(int j = 0; j < search_grain+1; j++){
+            Vector variation = dn*sin(dtheta*j) + B*cos(dtheta*j);
+            //variation = variation*base_search_radius;
+            Vector search_point = wire(step*i+lower_bound) + variation*base_search_radius;
+            magnetic_field = mag_field_calc(search_point, upper_bound, lower_bound, int_grain, current, dwire);
+            string output_data = search_point.data_out()+" "+magnetic_field.data_out(); //string output_data = search_point.data_out()+" "+magnetic_field.data_out()
+            data_out(output_data, "data.txt");
         }
     }
+
+}
+
+int main(){   
+    //setting run parameters
+    float wire_grain = 50;
+    float search_grain = 40;
+    float int_grain = 10000;
+    float upper_bound = 3*pi;
+    float lower_bound = -1*pi;
+    float current = 1.0;
+
+    //Clearing old data 
+    data_delete("data.txt");
+
+    //Searching points on a unit circle around wire
+    search_field(wire_grain, search_grain, upper_bound, lower_bound, int_grain, current);
+
     return 0;
 }

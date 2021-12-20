@@ -104,6 +104,13 @@ float Vector::length(){
     return pow(squared_total,0.5);
 }
 
+void Vector::normalize(){
+    float norm_factor = sqrt(e1*e1 + e2*e2 + e3*e3);
+    e1 /= norm_factor;
+    e2 /= norm_factor;
+    e3 /= norm_factor;
+}
+
 string Vector::data_out(){
     std::ostringstream stream;
     stream << "[" << e1;

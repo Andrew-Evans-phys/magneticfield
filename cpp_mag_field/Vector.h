@@ -20,6 +20,7 @@ class Vector{
         float dot_product(Vector v);
         Vector cross_product(Vector v);
         float length();
+        void normalize();
         string data_out();
     private:
         float e1;

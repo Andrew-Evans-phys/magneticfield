@@ -54,7 +54,11 @@ ax = fig.add_subplot(projection='3d')
 
 
 s = 1
-ax.quiver(pos_x, pos_y, pos_z, mag_x, mag_y, mag_z, length=.2, lw=2, normalize=False)#, colors = strength
-#ax.scatter(pos_x, pos_y, pos_z, s=s * 5, c=strength, cmap='rainbow')
+ax.quiver(pos_x, pos_y, pos_z, mag_x, mag_y, mag_z, length=.4, lw=2, normalize=True)#, colors = strength
+ax.scatter([1,1,1,-1], [1,-1,1,-1], [1,1,-1,-1])
+#xline = []
+#yline = []
+#zline = []
+#ax.plot3D(xline, yline, zline, 'gray') #This needs data
 
 plt.show()
