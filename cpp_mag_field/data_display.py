@@ -35,6 +35,7 @@ pos_z = []
 mag_x = []
 mag_y = []
 mag_z = []
+strength = []
 for i in position:
      pos_x.append(float(i[0]))
      pos_y.append(float(i[1]))
@@ -48,13 +49,19 @@ strength = []
 for i in range(len(mag_x)):
      strength.append(np.sqrt(mag_x[i]**2+mag_y[i]**2+mag_z[i]**2))
 
+for i in range(len(mag_x)):
+     mag_x[i] *= 1/strength[i]
+     mag_y[i] *= 1/strength[i]
+     mag_z[i] *= 1/strength[i]
+
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
 
 s = 1
-ax.quiver(pos_x, pos_y, pos_z, mag_x, mag_y, mag_z, length=.4, lw=2, normalize=True)#, colors = strength
+cmap = plt.get_cmap()
+ax.quiver(pos_x, pos_y, pos_z, mag_x, mag_y, mag_z, length=.5, lw=1, color = cmap(strength))#, colors = strength
 ax.scatter([1,1,1,-1], [1,-1,1,-1], [1,1,-1,-1])
 #xline = []
 #yline = []

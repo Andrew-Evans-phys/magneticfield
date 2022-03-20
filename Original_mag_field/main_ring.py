@@ -66,7 +66,7 @@ ax = fig.gca(projection='3d')
 M = []
 for i in vector_list:
     M.append([np.sqrt(i[0]*i[0]+i[1]*i[1]+i[2]*i[2])])
-print(M)
+
 
 #curve
 zline = np.linspace(0, 2*m.pi, 500)
@@ -76,8 +76,8 @@ ax.plot3D(xline, yline, 0*zline, 'gray')
 
 #vector setup
 
-#qq = ax.quiver(X, Y, Z, U, V, W, cmap=plt.cm.jet) #I think the color based magnitude will go here
-ax.quiver(X, Y, Z, U, V, W, M, cmap=plt.cm.jet, length=0.5, normalize=True)
+cmap = plt.get_cmap()
+ax.quiver(X, Y, Z, U, V, W, M, cmap=plt.cm.jet, length=0.5, color = cmap(M))
 ax.set_xlim([-50, 50])
 ax.set_ylim([-50, 50])
 ax.set_zlim([-50, 50])
